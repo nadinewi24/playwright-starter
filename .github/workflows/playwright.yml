@@ -2,8 +2,6 @@
 # Bei der HYPO wäre das z. B. Azure DevOps oder GitLab, Prinzip identisch.
 name: Playwright Tests
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
 
