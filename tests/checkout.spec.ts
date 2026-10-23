@@ -13,7 +13,7 @@ test.describe('Bestellung (End-to-End)', () => {
     await expect(inventory.cartBadge).toHaveText('1');
   });
 
-  test('kompletter Bestellablauf', async ({ page }) => {
+  test('kompletter Bestellablauf',{ tag: '@smoke' }, async ({ page }) => {
     const inventory = new InventoryPage(page);
     const checkout = new CheckoutPage(page);
 

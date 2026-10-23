@@ -8,7 +8,7 @@ import { test, expect } from '@playwright/test';
 const API = 'https://restful-booker.herokuapp.com';
 
 test.describe('Buchungs-API', () => {
-  test('Buchung anlegen und wieder abrufen', async ({ request }) => {
+  test('Buchung anlegen und wieder abrufen',{ tag: '@smoke' }, async ({ request }) => {
     // 1) Anlegen (POST)
     const create = await request.post(`${API}/booking`, {
       data: {
