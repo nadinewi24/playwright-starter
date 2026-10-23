@@ -1,0 +1,70 @@
+name: Release Pipeline
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # erlaubt manuelles Starten per Button
+
+jobs:
+  # ---------- TEST ----------
+  deploy-test:
+    runs-on: ubuntu-latest
+    environment: test
+    steps:
+      - run: echo "Hier würde das Appian-Paket auf TEST deployed werden"
+
+  regression-test:
+    needs: deploy-test
+    runs-on: ubuntu-latest
+    environment: test
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npx playwright test
+        env:
+          CI: true
+          BASE_URL: ${{ vars.BASE_URL }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report-test
+          path: playwright-report/
+          retention-days: 30
+
+  # ---------- RELEASE CANDIDATE ----------
+  deploy-rc:
+    needs: regression-test
+    runs-on: ubuntu-latest
+    environment: release-candidate
+    steps:
+      - run: echo "Hier würde auf RELEASE CANDIDATE deployed werden"
+
+  smoke-rc:
+    needs: deploy-rc
+    runs-on: ubuntu-latest
+    environment: release-candidate
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npx playwright test --grep @smoke
+        env:
+          CI: true
+          BASE_URL: ${{ vars.BASE_URL }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report-rc
+          path: playwright-report/
+          retention-days: 30
+
+  # ---------- PRODUCTION ----------
+  deploy-prod:
+    needs: smoke-rc
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - run: echo "Hier würde auf PRODUCTION deployed werden"
