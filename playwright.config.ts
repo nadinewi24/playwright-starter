@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-
+import 'dotenv/config';
 /**
  * Zentrale Konfiguration: Hier steht EINMAL, wo und wie getestet wird.
  * Bei der HYPO wäre baseURL die Appian-Testumgebung.
@@ -17,7 +17,11 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
 
   // Berichte: Liste in der Konsole + HTML-Report (npx playwright show-report)
-  reporter: [['list'], ['html', { open: 'never' }]],
+reporter: [
+  ['list'],
+  ['html', { open: 'never' }],
+  ['./reporters/discord-reporter.ts'],
+],
 
   use: {
     // Basisadresse: Tests schreiben nur noch page.goto('/inventory.html')
