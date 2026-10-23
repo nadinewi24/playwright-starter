@@ -19,6 +19,7 @@ jobs:
       - run: npx playwright test
         env:
           CI: true
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
       # Report als Nachweis speichern (z. B. später an Xray anhängen)
       - uses: actions/upload-artifact@v4
         if: always()
