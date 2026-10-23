@@ -1,0 +1,30 @@
+# Pipeline: Bei jedem Push und Pull Request laufen alle Tests automatisch.
+# Bei der HYPO wäre das z. B. Azure DevOps oder GitLab, Prinzip identisch.
+name: Playwright Tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npx playwright test
+        env:
+          CI: true
+      # Report als Nachweis speichern (z. B. später an Xray anhängen)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
