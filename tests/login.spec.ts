@@ -6,7 +6,7 @@ import { users } from '../test-data/users';
 test.use({ storageState: { cookies: [], origins: [] } });
 
 test.describe('Login', () => {
-  test('erfolgreicher Login mit gültigem Benutzer', async ({ page }) => {
+  test('erfolgreicher Login mit gültigem Benutzer', { tag: '@smoke' },async ({ page }) => {
     const login = new LoginPage(page);
     await login.goto();
     await login.login(users.standard.username, users.standard.password);
